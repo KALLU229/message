@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Zeyada&display=swap');
+
+body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url('images/bg.jpeg');
+    background-position: center;
+    background-size: cover; /* Ensure background covers full viewport */
+    margin: 0; /* Remove default margin */
+    overflow: hidden; /* Prevent scrollbars */
+}
+
+.paper {
+    padding: 20px; /* Adjust padding for a better fit */
+    position: absolute;
+    transition: box-shadow 0.3s ease; /* Smooth transition for the glow effect */
+    background-image: url('paper.webp');
+    background-size: cover; /* Cover the entire paper */
+    background-position: center center;
+    width: 20vw; /* Responsive width */
+    max-width: 300px; /* Maximum width */
+    height: auto; /* Auto height based on content */
+    box-shadow: 1px 8px 10px 0px rgba(255, 105, 180, 0.8);
+    border-radius: 10px; /* Rounded corners */
+}
+
+
+.paper.image {
+    padding: 10px; /* Reduced padding for better spacing */
+    width: 20vw; /* Responsive width */
+    max-width: 300px; /* Maximum width */
+}
+
+.paper.image p {
+    font-size: 3vw; /* Responsive font size */
+    margin: 0; /* Remove default margin */
+    text-align: center; /* Center-align text */
+}
+
+img {
+    max-height: 250px; /* Limit image height */
+    width: 100%;
+    object-fit: cover; /* Ensure the image fits within the boundaries */
+    user-select: none;
+}
+
+/* Add pink glow effect when the element is selected or clicked */
+.paper:focus, 
+.paper:active {
+    box-shadow: 0 0 20px 10px rgba(244, 123, 206, 0.947); /* Pink glowing effect */
+    outline: none; /* Removes the default focus outline */
+}
+
+p {
+    font-family: 'Zeyada', cursive; /* Ensure font is cursive */
+    font-size: 3vw; /* Responsive font size */
+    color: rgb(0, 0, 100);
+    opacity: 1; /* Adjusted opacity */
+    user-select: none;
+    text-align: center; /* Center-align text */
+}
+
+/* Media queries for further responsiveness */
+@media (max-width: 600px) {
+    .paper {
+        width: 80vw; /* More width on smaller screens */
+        padding: 15px; /* Adjust padding */
+    }
+
+    .paper.image p {
+        font-size: 5vw; /* Larger text on smaller screens */
+    }
+    
+    p {
+        font-size: 5vw; /* Larger text on smaller screens */
+    }
+}
