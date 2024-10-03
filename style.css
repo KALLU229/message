@@ -16,7 +16,7 @@ body {
     padding: 20px; /* Adjust padding for a better fit */
     position: absolute;
     transition: box-shadow 0.3s ease; /* Smooth transition for the glow effect */
-    background-image: url('images/paper.webp');
+    background-image: url('paper.webp');
     background-size: cover; /* Cover the entire paper */
     background-position: center center;
     width: 20vw; /* Responsive width */
