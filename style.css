@@ -5,32 +5,37 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-image: url('bg.jpeg');
+    background-image: url('images/bg.jpeg');
     background-position: center;
-    background-size: cover; /* Ensure background covers full viewport */
-    margin: 0; /* Remove default margin */
-    overflow: hidden; /* Prevent scrollbars */
+    background-size: cover; 
+    margin: 0; 
+    overflow: hidden; 
 }
 
 .paper {
-    padding: 20px; /* Adjust padding for a better fit */
+    padding: 20px;
     position: absolute;
     transition: box-shadow 0.3s ease; /* Smooth transition for the glow effect */
-    background-image: url('paper.webp');
-    background-size: cover; /* Cover the entire paper */
+    background-image: url('images/paper.webp');
+    background-size: cover; 
     background-position: center center;
     width: 20vw; /* Responsive width */
     max-width: 300px; /* Maximum width */
-    height: auto; /* Auto height based on content */
+    height: auto;
     box-shadow: 1px 8px 10px 0px rgba(255, 105, 180, 0.8);
     border-radius: 10px; /* Rounded corners */
 }
+.paper {
+    touch-action: none;
+}
+
+
 
 
 .paper.image {
-    padding: 10px; /* Reduced padding for better spacing */
-    width: 20vw; /* Responsive width */
-    max-width: 300px; /* Maximum width */
+    padding: 10px; 
+    width: 20vw; 
+    max-width: 300px; 
 }
 
 .paper.image p {
