@@ -18,26 +18,31 @@ class Paper {
   rotating = false;
 
   init(paper) {
-    paper.addEventListener('touchmove', (e) => {
-      e.preventDefault();
-      
-      if (!this.holdingPaper) return;
+    // Add passive: false to ensure preventDefault works
+    paper.addEventListener(
+      'touchmove',
+      (e) => {
+        if (!this.holdingPaper) return;
 
-      this.touchMoveX = e.touches[0].clientX;
-      this.touchMoveY = e.touches[0].clientY;
+        if (e.touches.length === 1 && !this.rotating) {
+          e.preventDefault(); // Prevent scrolling behavior on touchmove
 
-      if (!this.rotating && e.touches.length === 1) {
-        this.velX = this.touchMoveX - this.prevTouchX;
-        this.velY = this.touchMoveY - this.prevTouchY;
-        this.currentPaperX += this.velX;
-        this.currentPaperY += this.velY;
+          this.touchMoveX = e.touches[0].clientX;
+          this.touchMoveY = e.touches[0].clientY;
 
-        this.prevTouchX = this.touchMoveX;
-        this.prevTouchY = this.touchMoveY;
-      }
+          this.velX = this.touchMoveX - this.prevTouchX;
+          this.velY = this.touchMoveY - this.prevTouchY;
+          this.currentPaperX += this.velX;
+          this.currentPaperY += this.velY;
 
-      paper.style.transform = `translateX(${this.currentPaperX}px) translateY(${this.currentPaperY}px) rotateZ(${this.rotation}deg)`;
-    });
+          this.prevTouchX = this.touchMoveX;
+          this.prevTouchY = this.touchMoveY;
+
+          paper.style.transform = `translateX(${this.currentPaperX}px) translateY(${this.currentPaperY}px) rotateZ(${this.rotation}deg)`;
+        }
+      },
+      { passive: false } // To allow preventDefault to work
+    );
 
     paper.addEventListener('touchstart', (e) => {
       if (this.holdingPaper) return;
@@ -60,6 +65,8 @@ class Paper {
 
     paper.addEventListener('touchmove', (e) => {
       if (e.touches.length === 2) {
+        e.preventDefault(); // Prevent unintended behaviors during rotation
+
         const touch1 = e.touches[0];
         const touch2 = e.touches[1];
 
@@ -74,8 +81,9 @@ class Paper {
         degrees = (360 + Math.round(degrees)) % 360;
 
         this.rotation = degrees;
-
         this.rotating = true;
+
+        paper.style.transform = `translateX(${this.currentPaperX}px) translateY(${this.currentPaperY}px) rotateZ(${this.rotation}deg)`;
       }
     });
   }
