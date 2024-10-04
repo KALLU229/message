@@ -1,97 +1,109 @@
 let highestZ = 1;
-
 class Paper {
-  holdingPaper = false;
-  touchStartX = 0;
-  touchStartY = 0;
-  touchMoveX = 0;
-  touchMoveY = 0;
-  touchEndX = 0;
-  touchEndY = 0;
-  prevTouchX = 0;
-  prevTouchY = 0;
-  velX = 0;
-  velY = 0;
-  rotation = Math.random() * 30 - 15;
-  currentPaperX = 0;
-  currentPaperY = 0;
-  rotating = false;
+    holdingpaper = false;
 
-  init(paper) {
-    // Add passive: false to ensure preventDefault works
-    paper.addEventListener(
-      'touchmove',
-      (e) => {
-        if (!this.holdingPaper) return;
+    prevMouseX = 0;
+    prevMouseY = 0;
 
-        if (e.touches.length === 1 && !this.rotating) {
-          e.preventDefault(); // Prevent scrolling behavior on touchmove
+    mouseX = 0;
+    mouseY = 0;
 
-          this.touchMoveX = e.touches[0].clientX;
-          this.touchMoveY = e.touches[0].clientY;
+    currentPaperX = 0;
+    currentPaperY = 0;
 
-          this.velX = this.touchMoveX - this.prevTouchX;
-          this.velY = this.touchMoveY - this.prevTouchY;
-          this.currentPaperX += this.velX;
-          this.currentPaperY += this.velY;
+    offsetX = 0;
+    offsetY = 0;
 
-          this.prevTouchX = this.touchMoveX;
-          this.prevTouchY = this.touchMoveY;
+    init(paper) {
+        const startDrag = (x, y) => {
+            this.holdingpaper = true;
 
-          paper.style.transform = `translateX(${this.currentPaperX}px) translateY(${this.currentPaperY}px) rotateZ(${this.rotation}deg)`;
-        }
-      },
-      { passive: false } // To allow preventDefault to work
-    );
+            // Bring this paper to the top layer
+            paper.style.zIndex = highestZ;
+            highestZ += 1;
 
-    paper.addEventListener('touchstart', (e) => {
-      if (this.holdingPaper) return;
+            // Store the initial mouse/touch position
+            this.prevMouseX = x;
+            this.prevMouseY = y;
 
-      this.holdingPaper = true;
+            // Get current position of the paper
+            const transform = window.getComputedStyle(paper).transform;
 
-      paper.style.zIndex = highestZ;
-      highestZ += 1;
+            // If paper is already transformed, get the X and Y translation values
+            if (transform !== 'none') {
+                const matrix = new DOMMatrix(transform);
+                this.currentPaperX = matrix.m41;
+                this.currentPaperY = matrix.m42;
+            }
 
-      this.touchStartX = e.touches[0].clientX;
-      this.touchStartY = e.touches[0].clientY;
-      this.prevTouchX = this.touchStartX;
-      this.prevTouchY = this.touchStartY;
-    });
+            console.log('Start drag:', this.prevMouseX, this.prevMouseY);
+        };
 
-    paper.addEventListener('touchend', () => {
-      this.holdingPaper = false;
-      this.rotating = false;
-    });
+        const moveDrag = (x, y) => {
+            if (this.holdingpaper) {
+                this.mouseX = x;
+                this.mouseY = y;
 
-    paper.addEventListener('touchmove', (e) => {
-      if (e.touches.length === 2) {
-        e.preventDefault(); // Prevent unintended behaviors during rotation
+                // Calculate the difference between the new mouse/touch position and the previous one
+                const dx = this.mouseX - this.prevMouseX;
+                const dy = this.mouseY - this.prevMouseY;
 
-        const touch1 = e.touches[0];
-        const touch2 = e.touches[1];
+                // Update the current position of the paper based on the difference
+                this.currentPaperX += dx;
+                this.currentPaperY += dy;
 
-        const dirX = touch2.clientX - touch1.clientX;
-        const dirY = touch2.clientY - touch1.clientY;
-        const dirLength = Math.sqrt(dirX * dirX + dirY * dirY);
-        const dirNormalizedX = dirX / dirLength;
-        const dirNormalizedY = dirY / dirLength;
+                // Apply the translation to the paper
+                paper.style.transform = `translate(${this.currentPaperX}px, ${this.currentPaperY}px)`;
 
-        const angle = Math.atan2(dirNormalizedY, dirNormalizedX);
-        let degrees = (angle * 180) / Math.PI;
-        degrees = (360 + Math.round(degrees)) % 360;
+                // Update the previous positions for the next move event
+                this.prevMouseX = this.mouseX;
+                this.prevMouseY = this.mouseY;
+            }
+        };
 
-        this.rotation = degrees;
-        this.rotating = true;
+        const endDrag = () => {
+            if (this.holdingpaper) {
+                console.log('End drag');
+                this.holdingpaper = false;
+            }
+        };
 
-        paper.style.transform = `translateX(${this.currentPaperX}px) translateY(${this.currentPaperY}px) rotateZ(${this.rotation}deg)`;
-      }
-    });
-  }
+        // Mouse Events
+        paper.addEventListener('mousedown', (e) => {
+            if (e.button === 0) {
+                startDrag(e.clientX, e.clientY);
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            moveDrag(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('mouseup', () => {
+            endDrag();
+        });
+
+        // Touch Events
+        paper.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            startDrag(touch.clientX, touch.clientY);
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            moveDrag(touch.clientX, touch.clientY);
+        });
+
+        window.addEventListener('touchend', () => {
+            endDrag();
+        });
+    }
 }
 
+// Select all paper elements and initialize the drag behavior
 const papers = Array.from(document.querySelectorAll('.paper'));
 
-papers.forEach((paper) => {
-  const p = new Paper();
-  p.init(paper);
+papers.forEach(paper => {
+    const p = new Paper();
+    p.init(paper);
 });
