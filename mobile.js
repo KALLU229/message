@@ -85,16 +85,19 @@ class Paper {
 
         // Touch Events
         paper.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent default touch behavior
             const touch = e.touches[0];
             startDrag(touch.clientX, touch.clientY);
         });
 
-        document.addEventListener('touchmove', (e) => {
+        paper.addEventListener('touchmove', (e) => {
+            e.preventDefault(); // Prevent default touch behavior
             const touch = e.touches[0];
             moveDrag(touch.clientX, touch.clientY);
         });
 
-        window.addEventListener('touchend', () => {
+        paper.addEventListener('touchend', (e) => {
+            e.preventDefault(); // Prevent default touch behavior
             endDrag();
         });
     }
